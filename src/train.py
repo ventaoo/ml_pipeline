@@ -32,11 +32,12 @@ class classification_models():
         self.word2vec_model = Word2Vec.load(self.config['WORD2VEC']['model_path'])
         self.X_train = np.array([self.text_to_vector(self.word2vec_model, text) for text in self.X_train['question_cleaned']])
         self.X_test = np.array([self.text_to_vector(self.word2vec_model, text) for text in self.X_test['question_cleaned']])
+        self.y_train = self.y_train.squeeze()
+        self.y_test = self.y_test.squeeze()
         self.log.info('X converted -> vec')
         
         self.project_path = os.path.join(os.getcwd(), "experiments")
         self.logistic_regression_path = os.path.join(self.project_path, "logistic_regression.sav")
-
         
 
     def text_to_vector(self, model, text):
