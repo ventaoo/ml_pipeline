@@ -68,18 +68,20 @@ class data_generator():
         dataset['label'] = dataset['Category'].apply(self.preprocess_label)
 
         # word2vec
-        sentences = [word_tokenize(text) for text in dataset['question_cleaned']]
-        model = Word2Vec(
-            sentences=sentences, 
-            vector_size=self.config.getint('WORD2VEC', 'vector_size'), 
-            window=self.config.getint('WORD2VEC', 'window'), 
-            min_count=self.config.getint('WORD2VEC', 'min_count'),
-            epochs=self.config.getint('WORD2VEC', 'epochs'),
-            sg=self.config.getboolean('WORD2VEC', 'sg')
-        )
-        model.save(self.word2vec_model_path)
-        self.config['WORD2VEC']['model_path'] = self.word2vec_model_path
-        self.log.info('Word2vec model saved')
+        if not os.path.exists(self.word2vec_model_path):
+            sentences = [word_tokenize(text) for text in dataset['question_cleaned']]
+            model = Word2Vec(
+                sentences=sentences, 
+                vector_size=self.config.getint('WORD2VEC', 'vector_size'), 
+                window=self.config.getint('WORD2VEC', 'window'), 
+                min_count=self.config.getint('WORD2VEC', 'min_count'),
+                epochs=self.config.getint('WORD2VEC', 'epochs'),
+                sg=self.config.getboolean('WORD2VEC', 'sg')
+            )
+            model.save(self.word2vec_model_path)
+            self.config['WORD2VEC']['model_path'] = self.word2vec_model_path
+            self.log.info('Word2vec model saved')
+        else: self.log.info('Word2vec model loaded')
 
         X_train, X_test, y_train, y_test = train_test_split(
             dataset['question_cleaned'], 
