@@ -27,7 +27,7 @@ class data_generator():
         self.log = logger.get_logger(__name__)
 
         self.project_path = os.path.join(os.getcwd(), "data")
-        self.data_path = os.path.join(self.project_path, 'JEOPARDY_csv.csv')
+        self.data_path = os.path.join(self.project_path, 'JEOPARDY_CSV.csv')
         self.train_path = [os.path.join(self.project_path, "Train_JEOPARDY_csv_X.csv"), os.path.join(
             self.project_path, "Train_JEOPARDY_csv_y.csv")]
         self.test_path = [os.path.join(self.project_path, "Test_JEOPARDY_csv_X.csv"), os.path.join(
@@ -81,7 +81,9 @@ class data_generator():
             model.save(self.word2vec_model_path)
             self.config['WORD2VEC']['model_path'] = self.word2vec_model_path
             self.log.info('Word2vec model saved')
-        else: self.log.info('Word2vec model loaded')
+        else: 
+            self.config['WORD2VEC']['model_path'] = self.word2vec_model_path
+            self.log.info('Word2vec model loaded')
 
         X_train, X_test, y_train, y_test = train_test_split(
             dataset['question_cleaned'], 
