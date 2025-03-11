@@ -4,4 +4,4 @@ services:
        command: bash -c "python src/preprocess.py && python src/train.py && pytest src/tests/ --cov=src --cov-report=html"
        ports:
            - 8000:8000
-       image: ml-pipeline:latest
+       image: zwttt/ml_pipeline:latest
