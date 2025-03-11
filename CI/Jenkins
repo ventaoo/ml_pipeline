@@ -1,0 +1,91 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOCKERHUB_CREDS=credentials('ba7bf351-123e-409d-8d95-1c72fb78ffe4')  // 引用 Jenkins 凭据
+        LC_ALL = "en_US.UTF-8"
+        LANG    = "en_US.UTF-8"
+        LANGUAGE = "en_US.UTF-8"
+    }
+
+    options {
+        timestamps()
+        skipDefaultCheckout(true)
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                cleanWs()
+                git branch: 'main', url: 'https://github.com/ventaoo/ml_pipeline.git'
+            }
+        }
+
+        stage('Login to DockerHub') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin'
+            }
+        }
+        
+        // 阶段 1：构建并运行 Docker 容器
+        stage('Create and run docker container') {
+            steps {
+                script {
+                    dir('ml_pipeline') {
+                        // 尝试构建镜像，无论成功与否都启动容器
+                        try {
+                            sh 'docker-compose build'
+                        } finally {
+                            sh 'docker-compose up -d'
+                        }
+                    }
+                }
+            }
+        }
+
+        // 阶段 2：检查容器日志
+        stage('Checkout container logs') {
+            steps {
+                dir('ml_pipeline') {
+                    script {
+                        def containerId = sh(
+                            script: 'docker ps -qf "name=^mle-pipeline"',
+                            returnStdout: true
+                        ).trim()
+
+                        if (containerId.isEmpty()) {
+                            echo "No container running"
+                        } else {
+                            // 输出容器最后 1000 行日志（非持续跟踪）
+                            sh "docker logs --tail 1000 ${containerId}"
+                        }
+                    }
+                }
+            }
+        }
+
+        // 阶段 3：检查测试覆盖率报告
+        stage('Checkout coverage report') {
+            steps {
+                dir('ml_pipeline') {
+                    // 显示容器日志的最后 10 行（含时间戳）
+                    sh 'docker-compose logs -t --tail 10'
+                }
+            }
+        }
+
+        // 阶段 4：推送镜像到 DockerHub
+        stage('Push') {
+            steps {
+                sh 'docker push zwttt/ml_pipeline'
+            }
+        }
+    }
+    
+    post {
+        always {
+            sh 'docker logout'
+        }
+    }
+    
+}
