@@ -1,2 +1,8 @@
-2025-02-27 12:59:01,551 — __main__ — INFO — X converted -> vec
-2025-02-27 12:59:01,611 — __main__ — INFO — /Users/zwt/Desktop/github_project/ml_pipeline/experiments/logistic_regression.sav is saved
+2025-03-27 12:30:07,777 — train — INFO — X converted -> vec
+2025-03-27 12:30:08,788 — train — INFO — /Users/zwt/Desktop/github_project/ml_pipeline/experiments/logistic_regression.sav is saved
+zwt/Desktop/github_project/ml_pipeline/data/Train_JEOPARDY_csv_X.csv is saved
+2025-03-27 12:30:08,614 — preprocess — INFO — /Users/zwt/Desktop/github_project/ml_pipeline/data/Train_JEOPARDY_csv_y.csv is saved
+2025-03-27 12:30:08,614 — preprocess — INFO — /Users/zwt/Desktop/github_project/ml_pipeline/data/Test_JEOPARDY_csv_X.csv is saved
+2025-03-27 12:30:08,615 — preprocess — INFO — /Users/zwt/Desktop/github_project/ml_pipeline/data/Test_JEOPARDY_csv_y.csv is saved
+2025-03-27 12:30:08,615 — preprocess — INFO — Train and test data is ready
+2025-03-27 12:30:08,617 — preprocess — INFO — /Users/zwt/Desktop/github_project/ml_pipeline/data/Test_JEOPARDY_csv_X.csv is saved
