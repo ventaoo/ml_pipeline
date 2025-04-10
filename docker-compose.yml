@@ -1,7 +1,23 @@
 services:
-   web:
-       build: .
-       command: bash -c "python src/preprocess.py && python src/train.py && pytest src/tests/ --cov=src --cov-report=html && uvicorn src.api.app:app --host 0.0.0.0 --port 8000 --reload"
-       ports:
-           - 8000:8000
-       image: zwttt/ml_pipeline:latest
+  web:
+    build: .
+    command: |
+      bash -c "
+        python src/preprocess.py &&
+        python src/train.py && 
+        
+        uvicorn src.api.app:app --host 0.0.0.0 --port 8000 --reload & 
+        
+        echo '等待API服务启动...' &&
+        while ! nc -z localhost 8000; do 
+          sleep 1 
+        done && 
+        
+        echo '开始执行测试...' &&
+        pytest src/tests/ --cov=src --cov-report=html && 
+        
+        tail -f /dev/null
+      "
+    ports:
+      - "8000:8000"
+    image: zwttt/ml_pipeline:latest
