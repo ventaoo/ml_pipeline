@@ -6,6 +6,7 @@ pipeline {
         LC_ALL = "en_US.UTF-8"
         LANG    = "en_US.UTF-8"
         LANGUAGE = "en_US.UTF-8"
+        IMAGE_TAG = 'zwttt/ml_pipeline:latest'
     }
 
     options {
@@ -83,6 +84,12 @@ pipeline {
     }
     
     post {
+        success {
+            // 触发 CD 流水线，传递 env.IMAGE_TAG 参数
+            build job: 'ml-cd-pipeline', 
+                  parameters: [string(name: 'IMAGE_TAG', value: env.IMAGE_TAG)], // ✅ 正确：通过 env 访问
+                  wait: false
+        }
         always {
             sh 'docker logout'
         }
